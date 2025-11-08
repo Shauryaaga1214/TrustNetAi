@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>TrustNet AI</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            width: 400px;
+            background: var(--bg-dark);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.5;
+        }
+        
+        .container {
+            padding: 0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .status-bar {
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--danger);
+        }
+        
+        .status-dot.connected {
+            background: var(--success);
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .input-group {
+            margin-bottom: 16px;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        
+        .text-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            background: var(--bg-card);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: var(--text);
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+        
+        .text-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid #334155;
+        }
+        
+        .btn-secondary:hover {
+            background: #2d3748;
+        }
+        
+        .test-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        
+        .test-btn {
+            padding: 8px 12px;
+            background: var(--bg-card);
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .test-btn:hover {
+            background: #2d3748;
+            color: var(--text);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            display: none;
+        }
+        
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #334155;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result {
+            margin-top: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .result-header {
+            padding: 20px;
+            text-align: center;
+            background: var(--bg-card);
+        }
+        
+        .result-score {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 8px 0;
+        }
+        
+        .result-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .result.high .result-header { background: var(--danger); }
+        .result.medium .result-header { background: var(--warning); color: #1c1917; }
+        .result.low .result-header { background: var(--success); color: #1c1917; }
+        
+        .result-content {
+            padding: 16px;
+            background: var(--bg-card);
+        }
+        
+        .detail-grid {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .detail-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+        }
+        
+        .risk-badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .risk-high { background: var(--danger); color: white; }
+        .risk-medium { background: var(--warning); color: #1c1917; }
+        .risk-low { background: var(--success); color: #1c1917; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🛡️ TrustNet AI</div>
+            <div class="subtitle">AI Content Detection</div>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-dot" id="statusDot"></div>
+            <span id="statusText">Checking connection...</span>
+        </div>
+        
+        <div class="content">
+            <div class="input-group">
+                <label class="input-label">Text to Analyze</label>
+                <textarea 
+                    class="text-input" 
+                    id="textInput"
+                    placeholder="Paste text to check for AI generation..."
+                ></textarea>
+            </div>
+            
+            <div class="test-buttons">
+                <button class="test-btn" id="testAi">Test AI Text</button>
+                <button class="test-btn" id="testHuman">Test Human Text</button>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" id="analyzeBtn">
+                    Analyze Text
+                </button>
+                <button class="btn btn-secondary" id="pageBtn">
+                    Scan Page
+                </button>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <div>Analyzing content...</div>
+            </div>
+            
+            <div class="result" id="result">
+                <div class="result-header">
+                    <div id="resultEmoji">🔍</div>
+                    <div class="result-score" id="resultScore">0%</div>
+                    <div class="result-title" id="resultTitle">Analysis Result</div>
+                </div>
+                <div class="result-content">
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">AI Model</span>
+                            <span class="detail-value" id="resultModel">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Confidence</span>
+                            <span class="detail-value" id="resultConfidence">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Risk Level</span>
+                            <span class="detail-value">
+                                <span id="resultRisk" class="risk-badge">-</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #334155;">
+                        <div style="font-weight: 600; margin-bottom: 8px;">Analysis</div>
+                        <div id="resultReasoning" style="font-size: 14px; color: var(--text-muted);">
+                            No analysis performed yet.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="popup.js"></script>
+    <script>
+        // Initialize connection check
+        document.addEventListener('DOMContentLoaded', () => {
+            checkConnection();
+        });
+    </script>
+</body>
+</html>
